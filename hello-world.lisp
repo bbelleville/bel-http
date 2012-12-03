@@ -1,8 +1,12 @@
 (use-package (list :sb-bsd-sockets :cl :bel-http))
 
+(defun nslookup (hostname)
+   (if hostname
+       (host-ent-address (get-host-by-name hostname))
+       nil))
+
 (defvar server (make-instance 'inet-socket :type :stream :protocol :tcp))
-(socket-bind server '(127 0 1 1) 8000)
-(socket-listen server 5)
+
 
 (defun respond ()
 	     (let ((con (socket-make-stream (socket-accept cl-user::server)  :input t :output t)))
@@ -18,7 +22,9 @@
 			       :body (format nil "hello world~%")))
 	       (close con)))
 
-(defun main ()
+(defun main (port)
+  (socket-bind server (nslookup (machine-instance)) port)
+  (socket-listen server 5)
   (loop
        (handler-case
 	   (respond)
