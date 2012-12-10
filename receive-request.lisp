@@ -19,9 +19,9 @@
   "returns a hash table consisting of key value pairs of strings. Strings in field-list are split on ':' to separate the key and the value"
   (let ((fields (make-hash-table)))
     (dolist (field field-list fields)
-      (destructuring-bind (key val) (mapcar #'(lambda (x) (string-trim *white-space* x))
-					    (let ((pos (position #\:  field)))
-					      (list (string-keyword (subseq field 0 pos)) (subseq field (1+ pos)))))
+      (destructuring-bind (key val) (let ((pos (position #\:  field)))
+				      (list (string-keyword (string-trim *white-space* (subseq field 0 pos)))
+					    (string-trim *white-space* (subseq field (1+ pos)))))
 	(setf (gethash key fields) val)))))
 
 (defun resolve-uri (uri)
@@ -51,6 +51,8 @@
 
 (export 'receive-request)
 (defun receive-request (listen-socket)
+  "Receives an http request from the socket listen-socket.
+The first return value is the request as an http-request structure, the second is the remote socket that the response can be sent to. The body slot of the http-request will be the stream that the body can be read from. If what is received cannot be parsed as a valid http request, this function will return nil as the first return value."
   (let* ((remote-socket (socket-accept listen-socket))
 	 (in-stream (socket-make-stream remote-socket :input t))
 	 (req (parse-request-header in-stream)))
