@@ -46,7 +46,7 @@
 (defgeneric content-length (content)
   (:documentation "a method to determine the content length of different types of content that can be sent"))
 
-(defgeneric send-to-socket (connection content)
+(defgeneric send-to-stream (out-stream content)
   (:documentation "Send the content to the socket connection. To specialize on the different types of content"))
 
 	      

@@ -6,7 +6,7 @@
   "this will read the lines of the header from stream and returns a list of the lines of the header"
  (let ((acc nil))
    (loop
-      (aif (read-line stream nil nil) ; will not error on eof, will just return
+      (aif (read-line stream nil nil) ; will not error on eof, will just return nil
 	   (let ((line (string-trim *line-ending* it)))
 	     (cond ((equal line "")
 		    (return (nreverse acc)))
@@ -52,10 +52,8 @@
 (export 'receive-request)
 (defun receive-request (listen-socket)
   "Receives an http request from the socket listen-socket.
-The first return value is the request as an http-request structure, the second is the remote socket that the response can be sent to. The body slot of the http-request will be the stream that the body can be read from. If what is received cannot be parsed as a valid http request, this function will return nil as the first return value."
+The first return value is the request as an http-request structure, the second is a bi-directional abivilent stream that the response can be sent to. The body slot of the http-request will not be set, but the body can be read from the stream. If what is received cannot be parsed as a valid http request, this function will return nil as the first return value."
   (let* ((remote-socket (socket-accept listen-socket))
-	 (in-stream (socket-make-stream remote-socket :input t))
-	 (req (parse-request-header in-stream)))
-    (if req
-	(setf (http-request-body req) in-stream)) ; the body should be handled by a higher level of abstraction, so provide the stream to read it.
-    (values req remote-socket)))
+	 (stream (socket-make-stream remote-socket :input t :output t :element-type :default))
+	 (req (parse-request-header stream)))
+    (values req stream)))
