@@ -50,10 +50,9 @@
     (error ())))
 
 (export 'receive-request)
-(defun receive-request (listen-socket)
-  "Receives an http request from the socket listen-socket.
+(defun receive-request (remote-socket)
+  "Receives an http request from the socket remote-socket. Remote socket should be a socket connection initiated by a client that will send a http request.
 The first return value is the request as an http-request structure, the second is a bi-directional abivilent stream that the response can be sent to. The body slot of the http-request will not be set, but the body can be read from the stream. If what is received cannot be parsed as a valid http request, this function will return nil as the first return value."
-  (let* ((remote-socket (socket-accept listen-socket))
-	 (stream (socket-make-stream remote-socket :input t :output t :element-type :default))
+  (let* ((stream (socket-make-stream remote-socket :input t :output t :element-type :default))
 	 (req (parse-request-header stream)))
     (values req stream)))
