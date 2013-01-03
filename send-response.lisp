@@ -36,7 +36,7 @@
     (loop until (= (setf pos (read-sequence buffer source)) 0) do
 	 (write-sequence buffer dest :end pos))))
 
-;;; send-to-socket implementations
+;;; send-to-stream implementations
 (defmethod send-to-stream (out-stream (content sequence))
   (declare (type stream out-stream)
 	   (type sequence content))
