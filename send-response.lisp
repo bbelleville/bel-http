@@ -62,7 +62,6 @@
 (defun send-body (out-stream response)
   (send-to-stream out-stream (http-response-body response)))
 
-(export 'send-response)
 (defun send-response (out-stream response)
   "writes a http-response to stream, will set the content length based on the length of body"
   (declare (type http-response response)

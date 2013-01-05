@@ -3,19 +3,6 @@
 (defparameter *line-ending* (format nil "~C~C" #\return #\newline))
 (defparameter *white-space* (list #\space #\tab))
 
-(export '(http-request
-	  make-http-request
-	  http-request-p
-	  http-request-method
-	  http-request-request-uri
-	  http-request-http-version
-	  http-request-header-fields
-	  http-request-body
-	  method
-	  request-uri
-	  http-version
-	  header-fields
-	  body))
 (defstruct http-request
   method
   request-uri
@@ -23,19 +10,6 @@
   header-fields
   body)
 
-(export '(http-response
-	  make-http-response
-	  http-response-p
-	  http-response-http-version
-	  http-response-status-code
-	  http-response-reason-phrase
-	  http-response-header-fields
-	  http-response-body
-	  http-version
-	  status-code
-	  reason-phrase
-	  header-fields
-	  body))
 (defstruct http-response
   http-version
   status-code
