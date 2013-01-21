@@ -16,6 +16,7 @@
   (declare (type http-response response)
 	   (type stream out-stream))
   (maphash #'(lambda (key val)
+	       (declare (type symbol key))
 	       (format out-stream "~A: ~A~A"
 		       (string-capitalize
 			(string-downcase (symbol-name key)))

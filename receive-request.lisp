@@ -19,10 +19,10 @@
   "returns a hash table consisting of key value pairs of strings. Strings in field-list are split on ':' to separate the key and the value"
   (let ((fields (make-hash-table)))
     (dolist (field field-list fields)
-      (destructuring-bind (key val) (let ((pos (position #\:  field)))
-				      (list (string-keyword (string-trim *white-space* (subseq field 0 pos)))
-					    (string-trim *white-space* (subseq field (1+ pos)))))
-	(setf (gethash key fields) val)))))
+      (multiple-value-bind (key val) (break-string #\: field)
+	(setf (gethash (string-keyword (string-trim *white-space* key))
+				       fields)
+	      (string-trim *white-space* val))))))
 
 (defun resolve-uri (uri)
   "this resolves any '.' or '..' in the uri, and will not go above root"
@@ -47,7 +47,7 @@
 	(destructuring-bind (method req-uri version) (split-string " " (car header))
 	  (make-http-request :method method :request-uri (resolve-uri req-uri) :http-version version :header-fields (make-header-fields (cdr header)))))
     ; returns nil for any error
-    (error ())))
+    (error () )))
 
 (defun receive-request (remote-socket)
   "Receives an http request from the socket remote-socket. Remote socket should be a socket connection initiated by a client that will send a http request.
